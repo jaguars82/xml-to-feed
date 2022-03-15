@@ -73,15 +73,11 @@
 
     </div>
 
-    <!--<span v-for="item in selected" :key="item">
-      {{ item }} 
-    </span>-->
-
   </div>
 </template>
 
 <script>
-import { columnMap } from '../helpers/excel'
+import { columns } from '../helpers/excel'
 import * as XLSX from 'xlsx'
 import { VueSelecto } from 'vue-selecto'
 
@@ -95,18 +91,22 @@ export default {
       dragContainer: '.table-container',
       grid: {
         rows: 150,
-        columns: columnMap
+        columns: columns
       },
       worksheet: null,
-      renderedTable: null
+      renderedTable: null,
+      renderdCells: {},
+      renderdCellsArr: [],
+      chessSectionRange: {}
     }
   },
   methods: {
     onDragStart(e) {
-      console.log("ds", e.inputEvent.target)
+      // console.log("ds", e.inputEvent.target)
+      void(e)
     },
     onSelectStart(e) {
-      console.log("start", e)
+      // console.log("start", e)
       e.added.forEach(el => {
         el.classList.add("selected")
       })
@@ -115,11 +115,18 @@ export default {
       })
     },
     onSelectEnd(e) {
-      console.log("end", e);
+      // console.log("end", e);
 
+      const selectedCells = []
       e.selected.forEach(el => {
-        console.log(el.dataset.address)
+        // console.log(el.dataset.address)
+        selectedCells.push(el.dataset.address)
       })
+      const range = { start: selectedCells[0], end: selectedCells[selectedCells.length - 1] }
+      console.log(selectedCells)
+      console.log(range)
+      this.chessSectionRange = range
+      
 
       e.afterAdded.forEach(el => {
         el.classList.add("selected")
@@ -155,6 +162,10 @@ export default {
     buildTable(ws) {
       /* prepare object to build table */
       const tableObject = {}
+
+      /** TO DO - выбрать между cellsObject и cellsArray более подходящий формат */
+      const cellsObject = {}
+      const cellsArray = []
       // console.log(ws)
       //for (let row in this.grid.rows) {
       for (let row = 1; row <= this.grid.rows; row++) {
@@ -171,11 +182,17 @@ export default {
           cell['value'] =  cellValue
           // cell['value'] =  cellAddress in this.worksheet ? this.worksheet[cellAddress].v : null
           rowCells.push(cell)
+          cellsObject[cellAddress] = cell
+          cellsArray.push(cell)
         }
         tableObject[row] = rowCells
       }
       // console.log(tableObject)
       this.renderedTable = tableObject
+      this.renderdCells = cellsObject
+      this.renderdCellsArr = cellsArray
+      // console.log(cellsObject)
+      // console.log(cellsArray)
     },
     onChange(event) {
       this.worksheet = null
