@@ -10,7 +10,8 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
-    "vue-selecto": "^1.15.0"
+    "vue-selecto": "^1.15.0",
+    "xlsx": "^0.18.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.15",
