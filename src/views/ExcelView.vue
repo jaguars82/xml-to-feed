@@ -80,6 +80,8 @@
       :chessDimension="chessSectionDimension"
       :startRow="startRow"
       :startColumn="startColumn"
+      :chessObject="renderdCells"
+      :chessArray="renderdCellsArr"
       :is="feedComponent">
     </component>
 
@@ -90,7 +92,6 @@
 import { columns } from '../helpers/excel'
 import * as XLSX from 'xlsx'
 import { VueSelecto } from 'vue-selecto'
-import XML from 'xml'
 
 export default {
   components: {
@@ -223,9 +224,6 @@ export default {
       // console.log(cellsArray)
     },
     onChange(event) {
-      let xmlstr = XML({a: 1})
-      console.log(xmlstr)
-
 
       this.worksheet = null
       this.renderedTable = null
