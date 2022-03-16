@@ -53,6 +53,8 @@
             v-for="cell in row"
             :key="cell.address"
             :data-address="cell.address"
+            :data-row="cell.row"
+            :data-column="cell.column"
           >
             <span v-if="cell.value !== null">{{ cell.value }}</span>
           </td>
@@ -73,6 +75,14 @@
 
     </div>
 
+    <div>Область формирования фида</div>
+    <component
+      :chessDimension="chessSectionDimension"
+      :startRow="startRow"
+      :startColumn="startColumn"
+      :is="feedComponent">
+    </component>
+
   </div>
 </template>
 
@@ -80,10 +90,12 @@
 import { columns } from '../helpers/excel'
 import * as XLSX from 'xlsx'
 import { VueSelecto } from 'vue-selecto'
+import XML from 'xml'
 
 export default {
   components: {
-    VueSelecto
+    VueSelecto,
+    FeedCityCenter1C: () => import('../components/feeds/FeedCityCenter1C.vue')
   },
   data () {
     return {
@@ -97,7 +109,11 @@ export default {
       renderedTable: null,
       renderdCells: {},
       renderdCellsArr: [],
-      chessSectionRange: {}
+      startRow: null,
+      startColumn: '',
+      chessSectionRange: {},
+      chessSectionDimension: [],
+      feedComponent: 'FeedCityCenter1C'
     }
   },
   methods: {
@@ -118,15 +134,27 @@ export default {
       // console.log("end", e);
 
       const selectedCells = []
+      const selectedRows = []
+      const selectedColumns = []
       e.selected.forEach(el => {
         // console.log(el.dataset.address)
         selectedCells.push(el.dataset.address)
+        if(selectedRows.indexOf(el.dataset.row) === -1) {
+          selectedRows.push(el.dataset.row)
+        }
+        if(!selectedColumns.includes(el.dataset.column)) {
+          selectedColumns.push(el.dataset.column)
+        }
       })
       const range = { start: selectedCells[0], end: selectedCells[selectedCells.length - 1] }
-      console.log(selectedCells)
-      console.log(range)
+      this.startRow = selectedRows[0]
+      this.startColumn = selectedColumns[0]
+      // console.log(selectedCells)
+      // console.log(selectedRows)
+      // console.log(selectedColumns)
+      // console.log(range)
       this.chessSectionRange = range
-      
+      this.chessSectionDimension = [selectedColumns.length, selectedRows.length]
 
       e.afterAdded.forEach(el => {
         el.classList.add("selected")
@@ -195,6 +223,10 @@ export default {
       // console.log(cellsArray)
     },
     onChange(event) {
+      let xmlstr = XML({a: 1})
+      console.log(xmlstr)
+
+
       this.worksheet = null
       this.renderedTable = null
       this.readWorksheet(event)

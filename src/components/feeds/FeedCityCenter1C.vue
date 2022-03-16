@@ -1,6 +1,10 @@
 <template>
   <div>
-
+    <button
+      @click="onGenerate"
+    >
+      Сгенерировать фид по выделению
+    </button>
   </div>
 </template>
 
@@ -31,8 +35,36 @@ export default {
       flatDimension: [3, 7]
     }
   },
+  computed: {
+    isSelectionCorrect () {
+      const byWidth = this.chessDimension[0] % this.flatDimension[0]
+      const byHeight = this.chessDimension[1] % this.flatDimension[1]
+      return byWidth === 0 && byHeight === 0
+      // return [ byWidth, byHeight ]
+    },
+    floorsAmount() {
+      return this.chessDimension[1] / this.flatDimension[1]
+    },
+    flatsOnFloor() {
+      return this.chessDimension[0] / this.flatDimension[0]
+    }
+  },  
   methods: {
-    parseFlat()
+    onGenerate () {
+      if (this.isSelectionCorrect) {
+        alert('Match!')
+      } else {
+        alert('DOES NOT MATCH!!!')
+      }
+    },
+    parseFlat() {
+    },
+    processFloor() {
+
+    },
+    processChessTable() {
+
+    }
   }
 }
 </script>

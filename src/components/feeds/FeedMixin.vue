@@ -1,5 +1,7 @@
 <template>
-  
+  <div>
+    
+  </div>
 </template>
 
 <script>
@@ -7,9 +9,11 @@ import { columnMap } from '../../helpers/excel'
 
 export default {
   name: 'Feed',
-  props: [],
-  data: {
-    columnMap: columnMap
-  }
+  props: ['chessDimension', 'startRow', 'startColumn'],
+  data () {
+    return { 
+      columnMap: columnMap
+    }
+  },
 }
 </script>
