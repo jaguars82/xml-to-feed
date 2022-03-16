@@ -5,8 +5,8 @@
     >
       Сгенерировать фид по выделению
     </button>
-    <div>{{ processedFlats }}</div>
-    <div>{{ resultingFlatsObject }}</div>
+    <!--<div>{{ processedFlats }}</div>
+    <div>{{ resultingFlatsObject }}</div>-->
   </div>
 </template>
 
@@ -65,8 +65,8 @@ export default {
         // alert('Match!')
         this.processChessTable(this.startRow, this.startColumn)
         // console.log(rawChess)
-        console.log(this.processedFlats)
-        console.log(this.resultingFlatsObject)
+        // console.log(this.processedFlats)
+        // console.log(this.resultingFlatsObject)
         console.log(XML(this.resultingFlatsObject))
       } else {
         alert('DOES NOT MATCH!!!')
@@ -86,29 +86,29 @@ export default {
       return this.chessObject[targetCelladdress].value
     },
     parseFlat(startRow, startColumn) {
-      const flat = {}
+      const flat = []
 
       // get flat number
-      flat['apartment'] = this.processCell(startRow, startColumn, this.offsets.flatNumber)
+      flat.push({ apartment: this.processCell(startRow, startColumn, this.offsets.flatNumber) })
 
       // get floor
       const rawFloor = this.processCell(startRow, startColumn, this.offsets.floor)
       // console.log(rawFloor)
       const floorArr = rawFloor.split(' ')
-      flat['floor'] = floorArr[1]
+      flat.push({ floor: floorArr[1] })
 
       // get rooms
       const rawRoom = this.processCell(startRow, startColumn, this.offsets.rooms)
       const roomArr = rawRoom.split(' ')
-      flat['room'] = roomArr[0]
+      flat.push({ room: roomArr[0] })
 
       // get area
       const rawArea = this.processCell(startRow, startColumn, this.offsets.area)
       const areaArr = rawArea.split(' ')
-      flat['area'] = areaArr[3]
+      flat.push({ area: areaArr[3] })
 
       // get price
-      flat['price'] = this.processCell(startRow, startColumn, this.offsets.price)
+      flat.push({ price: this.processCell(startRow, startColumn, this.offsets.price) })
 
       this.processedFlats.push({ flat: flat })
       // return flat
