@@ -63,7 +63,7 @@ export default {
     onGenerate () {
       if (this.isSelectionCorrect) {
         // alert('Match!')
-        this.processChessTable(this.startRow, this.startColumn)
+        this.processChessTable(this.startRow, this.startColumn, 1)
         // console.log(rawChess)
         // console.log(this.processedFlats)
         // console.log(this.resultingFlatsObject)
@@ -114,7 +114,7 @@ export default {
       // return flat
 
     },
-    processFloor(startRow, startColumn) {
+    /* processFloor(startRow, startColumn) {
       // const floorArr = []
       for (let flat = 1; flat <= this.flatsOnFloor; flat++) {
         let row = startRow
@@ -127,8 +127,24 @@ export default {
         column = this.columnMap[targetColumnKey]
       }
       // return floorArr
+    }, */
+    processFloor(startRow, startColumn, flat) {
+      
+      if (flat > this.flatsOnFloor) { return }
+      //console.log(flat)
+      //console.log(this.flatsOnFloor)
+      console.log(startColumn)
+      this.parseFlat(startRow, startColumn)
+
+      const mapKeys = Object.keys(this.columnMap)
+      const currentColumnKey = mapKeys.find(key => this.columnMap[key] === startColumn)
+      const targetColumnKey = parseInt(currentColumnKey) + this.offsets.flatCell
+      const column = this.columnMap[targetColumnKey]
+      // console.log(currentColumnKey)
+
+      this.processFloor(startRow, column, flat + 1)
     },
-    processChessTable(startRow, startColumn) {
+    /* processChessTable(startRow, startColumn) {
       // const fullChess = []
       for (let floor = 1; floor <= this.floorsAmount; floor++) {
         let row = startRow
@@ -138,6 +154,12 @@ export default {
         row = parseInt(row) + this.offsets.floorRow
       }
       // return fullChess
+    } */
+    processChessTable(startRow, startColumn, floor) {
+      if(floor > this.floorsAmount) { return }
+      // console.log(startRow)
+      this.processFloor(startRow, startColumn, 1)
+      this.processChessTable(parseInt(startRow) + this.offsets.floorRow, startColumn, floor + 1)
     }
   }
 }
