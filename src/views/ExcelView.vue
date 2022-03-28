@@ -1,8 +1,14 @@
 <template>
   <div>
 
-    <input type="file" @change="onChange" />
+    <div>
+      <input type="text" v-model="buildingID" />
+    </div>
 
+    <div>
+      <input type="file" @change="onChange" />
+    </div>
+    
     <div
       id="table-container"
       class="table-container"
@@ -77,6 +83,7 @@
 
     <div>Область формирования фида</div>
     <component
+      :buildingID="buildingID"
       :chessDimension="chessSectionDimension"
       :startRow="startRow"
       :startColumn="startColumn"
@@ -103,9 +110,10 @@ export default {
       // dragContainer: document.body,
       dragContainer: '.table-container',
       grid: {
-        rows: 150,
+        rows: 300,
         columns: columns
       },
+      buildingID: '',
       worksheet: null,
       renderedTable: null,
       renderdCells: {},
@@ -244,8 +252,8 @@ export default {
 
 .table-container {
   width: 100%;
-  height: 500px;
-  overflow: scroll;
+  /*height: 2500px;
+  overflow: scroll;*/
 }
 
 .table-row {

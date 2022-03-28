@@ -89,72 +89,60 @@ export default {
       const flat = []
 
       // get flat number
-      flat.push({ apartment: this.processCell(startRow, startColumn, this.offsets.flatNumber) })
+      const flatNumber = this.processCell(startRow, startColumn, this.offsets.flatNumber)
+      if (flatNumber) {
+        // set flat ID
+        flat.push({ flat_id: `${this.buildingID}_${flatNumber}` })
+        // set flat number
+        flat.push({ apartment: flatNumber })
+      }
 
       // get floor
       const rawFloor = this.processCell(startRow, startColumn, this.offsets.floor)
-      // console.log(rawFloor)
-      const floorArr = rawFloor.split(' ')
-      flat.push({ floor: floorArr[1] })
+      if (rawFloor) {
+        const floorArr = rawFloor.split(' ')
+        flat.push({ floor: floorArr[1] })
+      }
 
       // get rooms
       const rawRoom = this.processCell(startRow, startColumn, this.offsets.rooms)
-      const roomArr = rawRoom.split(' ')
-      flat.push({ room: roomArr[0] })
-
-      // get area
-      const rawArea = this.processCell(startRow, startColumn, this.offsets.area)
-      const areaArr = rawArea.split(' ')
-      flat.push({ area: areaArr[3] })
+        if (rawRoom) {
+        const roomArr = rawRoom.split(' ')
+        flat.push({ room: roomArr[0] })
+      }
 
       // get price
-      flat.push({ price: this.processCell(startRow, startColumn, this.offsets.price) })
-
-      this.processedFlats.push({ flat: flat })
-      // return flat
-
-    },
-    /* processFloor(startRow, startColumn) {
-      // const floorArr = []
-      for (let flat = 1; flat <= this.flatsOnFloor; flat++) {
-        let row = startRow
-        let column = startColumn
-        //floorArr.push( this.parseFlat(row, column) )
-        this.parseFlat(row, column)
-        const mapKeys = Object.keys(this.columnMap)
-        const currentColumnKey = mapKeys.find(key => this.columnMap[key] === column)
-        const targetColumnKey = parseInt(currentColumnKey) + this.offsets.flatCell
-        column = this.columnMap[targetColumnKey]
+      const flatPrice = this.processCell(startRow, startColumn, this.offsets.price)
+      if (flatPrice) {
+        flat.push({ price: flatPrice })
       }
-      // return floorArr
-    }, */
+      
+      // get area
+      const rawArea = this.processCell(startRow, startColumn, this.offsets.area)
+      if (rawArea) {
+        const areaArr = rawArea.split(' ')
+        flat.push({ area: areaArr[3] })
+      }
+
+      if (flat.length > 0) {
+        this.processedFlats.push({ flat: flat })
+      }
+    },
     processFloor(startRow, startColumn, flat) {
       
       if (flat > this.flatsOnFloor) { return }
       //console.log(flat)
       //console.log(this.flatsOnFloor)
-      console.log(startColumn)
+      //console.log(startColumn)
       this.parseFlat(startRow, startColumn)
 
       const mapKeys = Object.keys(this.columnMap)
       const currentColumnKey = mapKeys.find(key => this.columnMap[key] === startColumn)
       const targetColumnKey = parseInt(currentColumnKey) + this.offsets.flatCell
       const column = this.columnMap[targetColumnKey]
-      // console.log(currentColumnKey)
 
       this.processFloor(startRow, column, flat + 1)
     },
-    /* processChessTable(startRow, startColumn) {
-      // const fullChess = []
-      for (let floor = 1; floor <= this.floorsAmount; floor++) {
-        let row = startRow
-        let column = startColumn
-        // fullChess.push( this.processFloor(row, column) )
-        this.processFloor(row, column)
-        row = parseInt(row) + this.offsets.floorRow
-      }
-      // return fullChess
-    } */
     processChessTable(startRow, startColumn, floor) {
       if(floor > this.floorsAmount) { return }
       // console.log(startRow)
