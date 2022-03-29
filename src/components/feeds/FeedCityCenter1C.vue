@@ -114,14 +114,14 @@ export default {
       // get price
       const flatPrice = this.processCell(startRow, startColumn, this.offsets.price)
       if (flatPrice) {
-        flat.push({ price: flatPrice })
+        flat.push({ price: flatPrice.replaceAll(/\s/g,'') })
       }
       
       // get area
       const rawArea = this.processCell(startRow, startColumn, this.offsets.area)
       if (rawArea) {
         const areaArr = rawArea.split(' ')
-        flat.push({ area: areaArr[3] })
+        flat.push({ area: parseFloat(areaArr[3].replaceAll(',', '.')) })
       }
 
       if (flat.length > 0) {
