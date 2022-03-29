@@ -1,23 +1,29 @@
 <template>
   <div>
-    <button
-      @click="onGenerate"
+    <button v-if="exportMode === 'xml'"
+      @click="onGenerateXML"
     >
-      Сгенерировать фид по выделению
+      Сгенерировать XML-фид по выделению
+    </button>
+    <button v-if="exportMode === 'sql'"
+      @click="onGenerateSQL"
+    >
+      Сгенерировать SQL-запрос по выделению
     </button>
     <!--<div>{{ processedFlats }}</div>
-    <div>{{ resultingFlatsObject }}</div>-->
+    <div>{{ resultingFlatsObjectForXML }}</div>-->
   </div>
 </template>
 
 <script>
-import FeedMixin from './FeedMixin.vue'
+import GeneratorMixin from './GeneratorMixin.vue'
 import XML from 'xml'
 
 export default {
-  mixins: [ FeedMixin ],
+  mixins: [ GeneratorMixin ],
   data () {
     return {
+
       /**
        *  offsets relitive to base (start) cell
        *  array [row offset, column offset]
@@ -55,19 +61,28 @@ export default {
     flatsOnFloor() {
       return this.chessDimension[0] / this.flatDimension[0]
     },
-    resultingFlatsObject () {
+    resultingFlatsObjectForXML () {
       return {flats: this.processedFlats}
     }
   },  
   methods: {
-    onGenerate () {
+    onGenerateXML () {
       if (this.isSelectionCorrect) {
         // alert('Match!')
         this.processChessTable(this.startRow, this.startColumn, 1)
         // console.log(rawChess)
         // console.log(this.processedFlats)
-        // console.log(this.resultingFlatsObject)
-        console.log(XML(this.resultingFlatsObject))
+        // console.log(this.resultingFlatsObjectForXML)
+        console.log(XML(this.resultingFlatsObjectForXML))
+      } else {
+        alert('DOES NOT MATCH!!!')
+      }
+    },
+    onGenerateSQL () {
+      if (this.isSelectionCorrect) {
+        this.processChessTable(this.startRow, this.startColumn, 1)
+        //console.log(this.resultingFlatsObjectForXML)
+        console.log(this.processedFlats)
       } else {
         alert('DOES NOT MATCH!!!')
       }

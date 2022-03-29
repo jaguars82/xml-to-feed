@@ -1,8 +1,18 @@
 <template>
   <div>
 
+    <select v-model="selectedMode">
+      <option v-for="mode in exportModes" :key="mode.value" :value="mode.value">{{ mode.text }}</option>
+    </select>
+
     <div>
+      <label>ID здания</label>
       <input type="text" v-model="buildingID" />
+    </div>
+
+    <div v-if="selectedMode === 'sql'">
+      <label>№ подъезда</label>
+      <input type="text" v-model="section" />
     </div>
 
     <div>
@@ -83,7 +93,9 @@
 
     <div>Область формирования фида</div>
     <component
+      :exportMode="selectedMode"
       :buildingID="buildingID"
+      :section="section"
       :chessDimension="chessSectionDimension"
       :startRow="startRow"
       :startColumn="startColumn"
@@ -103,10 +115,17 @@ import { VueSelecto } from 'vue-selecto'
 export default {
   components: {
     VueSelecto,
-    FeedCityCenter1C: () => import('../components/feeds/FeedCityCenter1C.vue')
+    GeneratorCityCenter1C: () => import('../components/generators/GeneratorCityCenter1C.vue')
   },
   data () {
     return {
+
+      exportModes: [
+        { value: 'xml', text: 'XML-фид' },
+        { value: 'sql', text: 'SQL-запрос' }
+      ],
+      selectedMode: 'sql',
+      
       // dragContainer: document.body,
       dragContainer: '.table-container',
       grid: {
@@ -114,6 +133,7 @@ export default {
         columns: columns
       },
       buildingID: '',
+      section: '',
       worksheet: null,
       renderedTable: null,
       renderdCells: {},
@@ -122,7 +142,7 @@ export default {
       startColumn: '',
       chessSectionRange: {},
       chessSectionDimension: [],
-      feedComponent: 'FeedCityCenter1C'
+      feedComponent: 'GeneratorCityCenter1C'
     }
   },
   methods: {
