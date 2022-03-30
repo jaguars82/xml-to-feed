@@ -10,8 +10,6 @@
     >
       Сгенерировать SQL-запрос по выделению
     </button>
-    <!--<div>{{ processedFlats }}</div>
-    <div>{{ resultingFlatsObjectForXML }}</div>-->
   </div>
 </template>
 
@@ -45,7 +43,8 @@ export default {
        * 
        */
       flatDimension: [3, 7],
-      processedFlats: []
+      processedFlats: [],
+      processedFlatsArrayOfObject: []
     }
   },
   computed: {
@@ -67,25 +66,41 @@ export default {
   },  
   methods: {
     onGenerateXML () {
+      this.resetPreviousResults()
       if (this.isSelectionCorrect) {
-        // alert('Match!')
         this.processChessTable(this.startRow, this.startColumn, 1)
-        // console.log(rawChess)
-        // console.log(this.processedFlats)
-        // console.log(this.resultingFlatsObjectForXML)
+
         console.log(XML(this.resultingFlatsObjectForXML))
       } else {
         alert('DOES NOT MATCH!!!')
       }
     },
     onGenerateSQL () {
+      this.resetPreviousResults()
       if (this.isSelectionCorrect) {
         this.processChessTable(this.startRow, this.startColumn, 1)
-        //console.log(this.resultingFlatsObjectForXML)
-        console.log(this.processedFlats)
+        // beginning of the query
+        let sqlString = 'INSERT INTO `flat` (`newbuilding_id`, `address`, `detail`, `area`, `rooms`, `floor`, `price_cash`, `status`, `created_at`, `updated_at`, `unit_price_cash`, `discount`, `azimuth`, `notification`, `extra_data`, `composite_flat_id`, `section`, `number`, `layout`, `unit_price_credit`, `price_credit`, `floor_position`, `floor_layout`, `layout_coords`, `is_euro`, `is_studio`) VALUES '
+        
+        this.processedFlatsArrayOfObject.forEach( (flat, i) => {
+
+            /** price for meter2 */ 
+            const separator = i < this.processedFlatsArrayOfObject.length - 1 ? ', ' : ';'
+            const priceForM2 = flat.price && flat.area ? parseFloat(flat.price / flat.area).toFixed(2) : 0
+            const price = flat.price ? flat.price : 0
+
+            const flatString = `(${this.buildingID}, NULL,	NULL,	${flat.area},	${flat.room},	${flat.floor},	${price},	2,	NOW(),	NOW(),	${priceForM2},	0,	NULL,	NULL,	NULL, NULL,	${this.section},	${flat.apartment},	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	0,	0)${separator}`
+
+            sqlString = sqlString + flatString
+        })
+        console.log(sqlString)
       } else {
         alert('DOES NOT MATCH!!!')
       }
+    },
+    resetPreviousResults () {
+      this.processedFlats = []
+      this.processedFlatsArrayOfObject =[]
     },
     processCell(row, column, offset) {
       if (offset[0] !== 0) { row = parseInt(row) + offset[0] }
@@ -96,12 +111,11 @@ export default {
         column = this.columnMap[targetColumnKey]
       }
       const targetCelladdress = `${column}${row}`
-      //console.log(targetCelladdress)
-      //console.log(this.chessObject[targetCelladdress].value)
       return this.chessObject[targetCelladdress].value
     },
     parseFlat(startRow, startColumn) {
       const flat = []
+      const flatObj = {}
 
       // get flat number
       const flatNumber = this.processCell(startRow, startColumn, this.offsets.flatNumber)
@@ -110,6 +124,7 @@ export default {
         flat.push({ flat_id: `${this.buildingID}_${flatNumber}` })
         // set flat number
         flat.push({ apartment: flatNumber })
+        flatObj['apartment'] = flatNumber
       }
 
       // get floor
@@ -117,6 +132,7 @@ export default {
       if (rawFloor) {
         const floorArr = rawFloor.split(' ')
         flat.push({ floor: floorArr[1] })
+        flatObj['floor'] = floorArr[1]
       }
 
       // get rooms
@@ -124,31 +140,34 @@ export default {
         if (rawRoom) {
         const roomArr = rawRoom.split(' ')
         flat.push({ room: roomArr[0] })
+        flatObj['room'] = roomArr[0]
       }
 
       // get price
       const flatPrice = this.processCell(startRow, startColumn, this.offsets.price)
       if (flatPrice) {
-        flat.push({ price: flatPrice.replaceAll(/\s/g,'') })
+        const price = flatPrice.replaceAll(/\s/g,'')
+        flat.push({ price: price })
+        flatObj['price'] = price
       }
       
       // get area
       const rawArea = this.processCell(startRow, startColumn, this.offsets.area)
       if (rawArea) {
         const areaArr = rawArea.split(' ')
-        flat.push({ area: parseFloat(areaArr[3].replaceAll(',', '.')) })
+        const area = parseFloat(areaArr[3].replaceAll(',', '.'))
+        flat.push({ area: area })
+        flatObj['area'] = area
       }
 
       if (flat.length > 0) {
-        this.processedFlats.push({ flat: flat })
+        this.processedFlats.push({ flat: flat }) // for XML-export
+        this.processedFlatsArrayOfObject.push(flatObj) // for SQL-export
       }
     },
     processFloor(startRow, startColumn, flat) {
       
       if (flat > this.flatsOnFloor) { return }
-      //console.log(flat)
-      //console.log(this.flatsOnFloor)
-      //console.log(startColumn)
       this.parseFlat(startRow, startColumn)
 
       const mapKeys = Object.keys(this.columnMap)
@@ -160,7 +179,7 @@ export default {
     },
     processChessTable(startRow, startColumn, floor) {
       if(floor > this.floorsAmount) { return }
-      // console.log(startRow)
+      
       this.processFloor(startRow, startColumn, 1)
       this.processChessTable(parseInt(startRow) + this.offsets.floorRow, startColumn, floor + 1)
     }
