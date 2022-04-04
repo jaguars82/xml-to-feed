@@ -91,7 +91,7 @@ export default {
         let sqlString = 'INSERT INTO `flat` (`newbuilding_id`, `address`, `detail`, `area`, `rooms`, `floor`, `price_cash`, `status`, `created_at`, `updated_at`, `unit_price_cash`, `discount`, `azimuth`, `notification`, `extra_data`, `composite_flat_id`, `section`, `number`, `layout`, `unit_price_credit`, `price_credit`, `floor_position`, `floor_layout`, `layout_coords`, `is_euro`, `is_studio`) VALUES '
         
         this.processedFlatsArrayOfObject.forEach( (flat, i) => {
-
+          if (flat.apartment) {
             /** price for meter2 */ 
             const separator = i < this.processedFlatsArrayOfObject.length - 1 ? ', ' : ';'
             const priceForM2 = flat.price && flat.area ? parseFloat(flat.price / flat.area).toFixed(2) : 0
@@ -100,6 +100,7 @@ export default {
             const flatString = `(${this.buildingID}, NULL,	NULL,	${flat.area},	${flat.room},	${flat.floor},	${price},	2,	NOW(),	NOW(),	${priceForM2},	0,	NULL,	NULL,	NULL, NULL,	${this.section},	${flat.apartment},	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	0,	0)${separator}`
 
             sqlString = sqlString + flatString
+          }
         })
         console.log(sqlString)
       } else {
@@ -121,7 +122,7 @@ export default {
       const targetCelladdress = `${column}${row}`
       return this.chessObject[targetCelladdress].value
     },
-    parseFlat(startRow, startColumn) {
+    parseFlat(startRow, startColumn, orderOnTheFloor) {
       const flat = []
       const flatObj = {}
 
@@ -143,6 +144,13 @@ export default {
           flat.push({ floor: floorArr[1] })
           flatObj['floor'] = floorArr[1]
         }
+      } else {
+        if (orderOnTheFloor === 1) {
+          const floor = this.processCell(startRow, startColumn, this.offsets.floor)
+          this.currentlyProcessingFloor = floor
+        }
+        flat.push({ floor: this.currentlyProcessingFloor })
+        flatObj['floor'] = this.currentlyProcessingFloor
       }
 
       // get rooms
@@ -193,7 +201,7 @@ export default {
     processFloor(startRow, startColumn, flat) {
       
       if (flat > this.flatsOnFloor) { return }
-      this.parseFlat(startRow, startColumn)
+      this.parseFlat(startRow, startColumn, flat)
 
       const mapKeys = Object.keys(this.columnMap)
       const currentColumnKey = mapKeys.find(key => this.columnMap[key] === startColumn)

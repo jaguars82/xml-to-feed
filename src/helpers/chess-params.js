@@ -14,7 +14,7 @@ const chessParams = {
   VDK: {
     offsets: {
       flatNumber: [0, 0],
-      // floor: [1, 0],
+      floor: [0, -1],
       rooms: [0 ,2],
       area: [1, 0],
       price: [2, 1],
