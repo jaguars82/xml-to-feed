@@ -16,6 +16,7 @@
 <script>
 import GeneratorMixin from './GeneratorMixin.vue'
 import XML from 'xml'
+import { chessParams } from '../../helpers/chess-params'
 
 export default {
   mixins: [ GeneratorMixin ],
@@ -27,7 +28,7 @@ export default {
        *  array [row offset, column offset]
        * 
        * */
-      offsets: {
+      /* offsets: {
         flatNumber: [0, 0],
         floor: [1, 0],
         rooms: [0 ,1],
@@ -36,18 +37,24 @@ export default {
         floorRow: 7,
         flatCell: 3
 
-      },
+      }, */
       /**
        * amount of cells a flat occupies
        * array [horizontal, vertical]
        * 
        */
-      flatDimension: [3, 7],
+      // flatDimension: [3, 7],
       processedFlats: [],
       processedFlatsArrayOfObject: []
     }
   },
   computed: {
+    offsets () {
+      return chessParams[this.exportSource].offsets
+    },
+    flatDimension () {
+      return chessParams[this.exportSource].flatDimension
+    },
     isSelectionCorrect () {
       const byWidth = this.chessDimension[0] % this.flatDimension[0]
       const byHeight = this.chessDimension[1] % this.flatDimension[1]

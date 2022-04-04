@@ -8,7 +8,7 @@ import { columnMap } from '../../helpers/excel'
 
 export default {
   name: 'Feed',
-  props: ['exportMode', 'section', 'buildingID', 'chessDimension', 'startRow', 'startColumn', 'chessObject', 'chessArray'],
+  props: ['exportSource', 'exportMode', 'section', 'buildingID', 'chessDimension', 'startRow', 'startColumn', 'chessObject', 'chessArray'],
   data () {
     return { 
       columnMap: columnMap

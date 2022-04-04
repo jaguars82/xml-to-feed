@@ -1,6 +1,10 @@
 <template>
   <div>
 
+    <select v-model="selectedSource">
+      <option v-for="source in exportSources" :key="source.value" :value="source.value">{{ source.text }}</option>
+    </select>
+
     <select v-model="selectedMode">
       <option v-for="mode in exportModes" :key="mode.value" :value="mode.value">{{ mode.text }}</option>
     </select>
@@ -92,7 +96,8 @@
     </div>
 
     <div>Область формирования фида</div>
-    <component
+    <!--<component
+      :exportSource="selectedSource"
       :exportMode="selectedMode"
       :buildingID="buildingID"
       :section="section"
@@ -102,7 +107,20 @@
       :chessObject="renderdCells"
       :chessArray="renderdCellsArr"
       :is="feedComponent">
-    </component>
+    </component>-->
+
+    <generator
+      :exportSource="selectedSource"
+      :exportMode="selectedMode"
+      :buildingID="buildingID"
+      :section="section"
+      :chessDimension="chessSectionDimension"
+      :startRow="startRow"
+      :startColumn="startColumn"
+      :chessObject="renderdCells"
+      :chessArray="renderdCellsArr"
+    >
+    </generator>
 
   </div>
 </template>
@@ -111,14 +129,22 @@
 import { columns } from '../helpers/excel'
 import * as XLSX from 'xlsx'
 import { VueSelecto } from 'vue-selecto'
+import Generator from '../components/generators/Generator.vue'
 
 export default {
   components: {
     VueSelecto,
-    GeneratorCityCenter1C: () => import('../components/generators/GeneratorCityCenter1C.vue')
+    // Generator: () => import('../components/generators/Generator.vue'),
+    Generator
   },
   data () {
     return {
+
+      exportSources: [
+        { value: 'CityCenter1C', text: 'шахматка 1С (Сити-Центр)' },
+        { value: 'VDK', text: 'шахматка ВДК' }
+      ],
+      selectedSource: 'CityCenter1C',
 
       exportModes: [
         { value: 'xml', text: 'XML-фид' },
@@ -142,7 +168,7 @@ export default {
       startColumn: '',
       chessSectionRange: {},
       chessSectionDimension: [],
-      feedComponent: 'GeneratorCityCenter1C'
+      // feedComponent: 'Generator'
     }
   },
   methods: {
