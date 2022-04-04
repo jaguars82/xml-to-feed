@@ -58,8 +58,9 @@ export default {
     isSelectionCorrect () {
       const byWidth = this.chessDimension[0] % this.flatDimension[0]
       const byHeight = this.chessDimension[1] % this.flatDimension[1]
+      // console.log( [ byWidth, byHeight ] )
       return byWidth === 0 && byHeight === 0
-      // return [ byWidth, byHeight ]
+      
     },
     floorsAmount() {
       return this.chessDimension[1] / this.flatDimension[1]
@@ -135,36 +136,53 @@ export default {
       }
 
       // get floor
-      const rawFloor = this.processCell(startRow, startColumn, this.offsets.floor)
-      if (rawFloor) {
-        const floorArr = rawFloor.split(' ')
-        flat.push({ floor: floorArr[1] })
-        flatObj['floor'] = floorArr[1]
+      if (this.exportSource === 'CityCenter1C') {
+        const rawFloor = this.processCell(startRow, startColumn, this.offsets.floor)
+        if (rawFloor) {
+          const floorArr = rawFloor.split(' ')
+          flat.push({ floor: floorArr[1] })
+          flatObj['floor'] = floorArr[1]
+        }
       }
 
       // get rooms
       const rawRoom = this.processCell(startRow, startColumn, this.offsets.rooms)
-        if (rawRoom) {
-        const roomArr = rawRoom.split(' ')
-        flat.push({ room: roomArr[0] })
-        flatObj['room'] = roomArr[0]
+      if (rawRoom) {
+        if (this.exportSource === 'CityCenter1C') {
+          const roomArr = rawRoom.split(' ')
+          flat.push({ room: roomArr[0] })
+          flatObj['room'] = roomArr[0]
+        } else {
+          flat.push({ room: rawRoom })
+          flatObj['room'] = rawRoom
+        }
       }
 
       // get price
       const flatPrice = this.processCell(startRow, startColumn, this.offsets.price)
       if (flatPrice) {
-        const price = flatPrice.replaceAll(/\s/g,'')
-        flat.push({ price: price })
-        flatObj['price'] = price
+        if (this.exportSource === 'CityCenter1C') {
+          const price = flatPrice.replaceAll(/\s/g,'')
+          flat.push({ price: price })
+          flatObj['price'] = price
+        } else {
+          flat.push({ price: flatPrice })
+          flatObj['price'] = flatPrice
+        }
       }
       
       // get area
       const rawArea = this.processCell(startRow, startColumn, this.offsets.area)
       if (rawArea) {
-        const areaArr = rawArea.split(' ')
-        const area = parseFloat(areaArr[3].replaceAll(',', '.'))
-        flat.push({ area: area })
-        flatObj['area'] = area
+        if (this.exportSource === 'CityCenter1C') {
+          const areaArr = rawArea.split(' ')
+          const area = this.exportSource === parseFloat(areaArr[3].replaceAll(',', '.'))
+          flat.push({ area: area })
+          flatObj['area'] = area
+        } else {
+          flat.push({ area: parseFloat( rawArea ) })
+          flatObj['area'] = parseFloat( rawArea )
+        }
       }
 
       if (flat.length > 0) {
