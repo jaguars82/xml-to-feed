@@ -155,7 +155,7 @@ export default {
       // dragContainer: document.body,
       dragContainer: '.table-container',
       grid: {
-        rows: 500,
+        rows: 600,
         columns: columns
       },
       buildingID: '',

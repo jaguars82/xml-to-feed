@@ -184,7 +184,7 @@ export default {
       if (rawArea) {
         if (this.exportSource === 'CityCenter1C') {
           const areaArr = rawArea.split(' ')
-          const area = this.exportSource === parseFloat(areaArr[3].replaceAll(',', '.'))
+          const area = parseFloat(areaArr[3].replaceAll(',', '.'))
           flat.push({ area: area })
           flatObj['area'] = area
         } else {
