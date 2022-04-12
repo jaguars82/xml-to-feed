@@ -137,7 +137,7 @@ export default {
       }
 
       // get floor
-      if (this.exportSource === 'CityCenter1C') {
+      if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
         const rawFloor = this.processCell(startRow, startColumn, this.offsets.floor)
         if (rawFloor) {
           const floorArr = rawFloor.split(' ')
@@ -156,7 +156,7 @@ export default {
       // get rooms
       const rawRoom = this.processCell(startRow, startColumn, this.offsets.rooms)
       if (rawRoom) {
-        if (this.exportSource === 'CityCenter1C') {
+        if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
           const roomArr = rawRoom.split(' ')
           flat.push({ room: roomArr[0] })
           flatObj['room'] = roomArr[0]
@@ -169,7 +169,7 @@ export default {
       // get price
       const flatPrice = this.processCell(startRow, startColumn, this.offsets.price)
       if (flatPrice) {
-        if (this.exportSource === 'CityCenter1C') {
+        if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
           const price = flatPrice.replaceAll(/\s/g,'')
           flat.push({ price: price })
           flatObj['price'] = price
@@ -182,7 +182,7 @@ export default {
       // get area
       const rawArea = this.processCell(startRow, startColumn, this.offsets.area)
       if (rawArea) {
-        if (this.exportSource === 'CityCenter1C') {
+        if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
           const areaArr = rawArea.split(' ')
           const area = parseFloat(areaArr[3].replaceAll(',', '.'))
           flat.push({ area: area })

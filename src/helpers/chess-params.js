@@ -11,6 +11,18 @@ const chessParams = {
       },
     flatDimension: [3, 7]
   },
+  CityCenter1CVar: { 
+    offsets: {
+        flatNumber: [2, 1],
+        floor: [1, 0],
+        rooms: [0 ,0],
+        area: [1, 0],
+        price: [4, 1],
+        floorRow: 7,
+        flatCell: 3
+      },
+    flatDimension: [3, 7]
+  },
   VDK: {
     offsets: {
       flatNumber: [0, 0],

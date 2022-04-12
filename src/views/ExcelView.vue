@@ -142,6 +142,7 @@ export default {
 
       exportSources: [
         { value: 'CityCenter1C', text: 'шахматка 1С (Сити-Центр)' },
+        { value: 'CityCenter1CVar', text: 'шахматка 1С (Сити-Центр), вариант' },
         { value: 'VDK', text: 'шахматка ВДК' }
       ],
       selectedSource: 'CityCenter1C',
