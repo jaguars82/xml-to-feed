@@ -22,28 +22,6 @@ export default {
   mixins: [ GeneratorMixin ],
   data () {
     return {
-
-      /**
-       *  offsets relitive to base (start) cell
-       *  array [row offset, column offset]
-       * 
-       * */
-      /* offsets: {
-        flatNumber: [0, 0],
-        floor: [1, 0],
-        rooms: [0 ,1],
-        area: [1, 0],
-        price: [3, 1],
-        floorRow: 7,
-        flatCell: 3
-
-      }, */
-      /**
-       * amount of cells a flat occupies
-       * array [horizontal, vertical]
-       * 
-       */
-      // flatDimension: [3, 7],
       processedFlats: [],
       processedFlatsArrayOfObject: []
     }
@@ -161,8 +139,12 @@ export default {
           flat.push({ room: roomArr[0] })
           flatObj['room'] = roomArr[0]
         } else {
-          flat.push({ room: rawRoom })
-          flatObj['room'] = rawRoom
+          let room = 1
+          if (parseInt(rawRoom) > 1) {
+            room = rawRoom
+          }
+          flat.push({ room: room })
+          flatObj['room'] = room
         }
       }
 
@@ -174,8 +156,12 @@ export default {
           flat.push({ price: price })
           flatObj['price'] = price
         } else {
-          flat.push({ price: flatPrice })
-          flatObj['price'] = flatPrice
+          let price = 0
+          if (flatPrice) {
+            price = flatPrice
+          }
+          flat.push({ price: price })
+          flatObj['price'] = price
         }
       }
       
@@ -188,8 +174,9 @@ export default {
           flat.push({ area: area })
           flatObj['area'] = area
         } else {
-          flat.push({ area: parseFloat( rawArea ) })
-          flatObj['area'] = parseFloat( rawArea )
+          const area = parseFloat( rawArea )
+          flat.push({ area: area })
+          flatObj['area'] = area
         }
       }
 

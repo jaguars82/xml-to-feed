@@ -34,6 +34,18 @@ const chessParams = {
       flatCell: 3
     },
     flatDimension: [3, 3]
+  },
+  Krays: {
+    offsets: {
+      flatNumber: [0, 0],
+      floor: [0, -1],
+      rooms: [0 ,1],
+      area: [1, 0],
+      price: [2, 1],
+      floorRow: 3,
+      flatCell: 2
+    },
+    flatDimension: [2, 3]
   }
 }
 
