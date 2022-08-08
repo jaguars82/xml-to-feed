@@ -1,26 +1,28 @@
 const chessParams = { 
   CityCenter1C: { 
     offsets: {
-        flatNumber: [0, 0],
-        floor: [1, 0],
-        rooms: [0 ,1],
-        area: [1, 0],
-        price: [3, 1],
-        floorRow: 7,
-        flatCell: 3
-      },
-    flatDimension: [3, 7]
+      flatNumber: [0, 0],
+      floor: [1, 0],
+      rooms: [0 ,1],
+      area: [1, 0],
+      price: [3, 1],
+      floorRow: 7, // amount of spreadsheet rows for one floor (or for one flat)
+      flatCell: 3 // amount of spreadsheet cells for one flat
+    },
+    filters: {},
+    flatDimension: [3, 7] // [amount of cells (flatCell), amount of rows (floorRows)]
   },
   CityCenter1CVar: { 
     offsets: {
-        flatNumber: [2, 1],
-        floor: [1, 0],
-        rooms: [0 ,0],
-        area: [1, 0],
-        price: [4, 1],
-        floorRow: 7,
-        flatCell: 3
-      },
+      flatNumber: [2, 1],
+      floor: [1, 0],
+      rooms: [0 ,0],
+      area: [1, 0],
+      price: [4, 1],
+      floorRow: 7,
+      flatCell: 3
+    },
+    filters: {},
     flatDimension: [3, 7]
   },
   VDK: {
@@ -33,6 +35,7 @@ const chessParams = {
       floorRow: 3,
       flatCell: 3
     },
+    filters: {},
     flatDimension: [3, 3]
   },
   Krays: {
@@ -45,7 +48,26 @@ const chessParams = {
       floorRow: 3,
       flatCell: 2
     },
+    filters: {},
     flatDimension: [2, 3]
+  },
+  Razvitie: {
+    offsets: {
+      flatNumber: [1, 1],
+      floor: [-1, -1],
+      rooms: [1, 6],
+      area: [1, 7],
+      price: [1, 4],
+      floorRow: 9,
+      flatCell: 2
+    },
+    filters: {
+      flatNumber: function (cellValue) {
+        let processedValue = cellValue;
+        return processedValue;
+      }
+    },
+    flatDimension: [2, 9]
   }
 }
 

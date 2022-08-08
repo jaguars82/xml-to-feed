@@ -30,6 +30,9 @@ export default {
     offsets () {
       return chessParams[this.exportSource].offsets
     },
+    filters () {
+      return chessParams[this.exportSource].filters
+    },
     flatDimension () {
       return chessParams[this.exportSource].flatDimension
     },
@@ -105,7 +108,15 @@ export default {
       const flatObj = {}
 
       // get flat number
-      const flatNumber = this.processCell(startRow, startColumn, this.offsets.flatNumber)
+      const rawflatNumber = this.processCell(startRow, startColumn, this.offsets.flatNumber)
+      let flatNumber = 0
+      if ('flatNumber' in this.filters && typeof this.filters.flatNumber === 'function') {
+        flatNumber = this.filters.flatNumber(rawflatNumber)
+        console.log('with filter')
+      } else {
+        flatNumber = rawflatNumber
+        console.log('no filter')
+      }
       if (flatNumber) {
         // set flat ID
         flat.push({ flat_id: `${this.buildingID}_${flatNumber}` })

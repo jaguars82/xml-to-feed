@@ -144,7 +144,8 @@ export default {
         { value: 'CityCenter1C', text: 'шахматка 1С (Сити-Центр)' },
         { value: 'CityCenter1CVar', text: 'шахматка 1С (Сити-Центр), вариант' },
         { value: 'VDK', text: 'шахматка ВДК' },
-        { value: 'Krays', text: 'шахматка КРАЙС' }
+        { value: 'Krays', text: 'шахматка КРАЙС' },
+        { value: 'Razvitie', text: 'шахматка РАЗВИТИЕ' }
       ],
       selectedSource: 'CityCenter1C',
 
@@ -175,11 +176,9 @@ export default {
   },
   methods: {
     onDragStart(e) {
-      // console.log("ds", e.inputEvent.target)
       void(e)
     },
     onSelectStart(e) {
-      // console.log("start", e)
       e.added.forEach(el => {
         el.classList.add("selected")
       })
@@ -188,13 +187,10 @@ export default {
       })
     },
     onSelectEnd(e) {
-      // console.log("end", e);
-
       const selectedCells = []
       const selectedRows = []
       const selectedColumns = []
       e.selected.forEach(el => {
-        // console.log(el.dataset.address)
         selectedCells.push(el.dataset.address)
         if(selectedRows.indexOf(el.dataset.row) === -1) {
           selectedRows.push(el.dataset.row)
@@ -206,10 +202,6 @@ export default {
       const range = { start: selectedCells[0], end: selectedCells[selectedCells.length - 1] }
       this.startRow = selectedRows[0]
       this.startColumn = selectedColumns[0]
-      // console.log(selectedCells)
-      // console.log(selectedRows)
-      // console.log(selectedColumns)
-      // console.log(range)
       this.chessSectionRange = range
       this.chessSectionDimension = [selectedColumns.length, selectedRows.length]
 
@@ -237,7 +229,6 @@ export default {
           /* Convert array of arrays */
           // const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
           this.worksheet = ws
-          // console.log(ws);
         }
         reader.readAsBinaryString(this.file)
         // const res = reader.readAsBinaryString(this.file);
