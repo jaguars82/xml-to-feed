@@ -69,7 +69,7 @@ export default {
       if (this.isSelectionCorrect) {
         this.processChessTable(this.startRow, this.startColumn, 1)
         // beginning of the query
-        let sqlString = 'INSERT INTO `flat` (`newbuilding_id`, `address`, `detail`, `area`, `rooms`, `floor`, `price_cash`, `status`, `created_at`, `updated_at`, `unit_price_cash`, `discount`, `azimuth`, `notification`, `extra_data`, `composite_flat_id`, `section`, `number`, `layout`, `unit_price_credit`, `price_credit`, `floor_position`, `floor_layout`, `layout_coords`, `is_euro`, `is_studio`) VALUES '
+        let sqlString = 'INSERT INTO `flat` (`newbuilding_id`, `entrance_id`, `address`, `detail`, `area`, `rooms`, `floor`, `price_cash`, `status`, `created_at`, `updated_at`, `unit_price_cash`, `discount`, `azimuth`, `notification`, `extra_data`, `composite_flat_id`, `section`, `number`, `layout`, `unit_price_credit`, `price_credit`, `floor_position`, `floor_layout`, `layout_coords`, `is_euro`, `is_studio`) VALUES '
         
         this.processedFlatsArrayOfObject.forEach( (flat, i) => {
           if (flat.apartment) {
@@ -78,7 +78,7 @@ export default {
             const priceForM2 = flat.price && flat.area ? parseFloat(flat.price / flat.area).toFixed(2) : 0
             const price = flat.price ? flat.price : 0
 
-            const flatString = `(${this.buildingID}, NULL,	NULL,	${flat.area},	${flat.room},	${flat.floor},	${price},	2,	NOW(),	NOW(),	${priceForM2},	0,	NULL,	NULL,	NULL, NULL,	${this.section},	${flat.apartment},	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	0,	0)${separator}`
+            const flatString = `(${this.buildingID}, ${this.entranceID}, NULL,	NULL,	${flat.area},	${flat.room},	${flat.floor},	${price},	2,	NOW(),	NOW(),	${priceForM2},	0,	NULL,	NULL,	NULL, NULL,	${this.section},	${flat.apartment},	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	0,	0)${separator}`
 
             sqlString = sqlString + flatString
           }
@@ -108,13 +108,17 @@ export default {
       const flatObj = {}
 
       // get flat number
-      const rawflatNumber = this.processCell(startRow, startColumn, this.offsets.flatNumber)
       let flatNumber = 0
-      if ('flatNumber' in this.filters && typeof this.filters.flatNumber === 'function') {
-        flatNumber = this.filters.flatNumber(rawflatNumber)
-      } else {
-        flatNumber = rawflatNumber
+      const rawflatNumber = this.processCell(startRow, startColumn, this.offsets.flatNumber)
+      
+      if (rawflatNumber) {
+        if ('flatNumber' in this.filters && typeof this.filters.flatNumber === 'function') {
+          flatNumber = this.filters.flatNumber(rawflatNumber)
+        } else {
+          flatNumber = rawflatNumber
+        }
       }
+      
       if (flatNumber) {
         // set flat ID
         flat.push({ flat_id: `${this.buildingID}_${flatNumber}` })

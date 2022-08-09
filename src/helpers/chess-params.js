@@ -87,8 +87,8 @@ const chessParams = {
     },
     filters: {
       flatNumber: function (cellValue) {
-        const arr = cellValue.split(' ')
-        return arr[1]
+        let processedCell = cellValue.replaceAll('= ', '').replaceAll(' =', '')
+        return processedCell.replaceAll(/\s/g,'')
       },
       rooms: function (cellValue) {
         const arr = cellValue.split('-')

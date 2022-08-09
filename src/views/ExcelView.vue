@@ -14,6 +14,11 @@
       <input type="text" v-model="buildingID" />
     </div>
 
+    <div>
+      <label>ID подъезда</label>
+      <input type="text" v-model="entranceID" />
+    </div>
+
     <div v-if="selectedMode === 'sql'">
       <label>№ подъезда</label>
       <input type="text" v-model="section" />
@@ -27,41 +32,6 @@
       id="table-container"
       class="table-container"
     >
-      <!--
-      <div
-        class="table-row"
-        v-for="(row, i) in grid.rows"
-        :key="i"
-      >
-        <div
-          class="cell"
-          v-for="column in grid.columns"
-          :key="`${column}${row}`"
-        >
-          {{column}}{{row}}<br />
-          <span v-if="worksheet" v-text="worksheet[ 'A' + 4 ].v"></span>
-        </div>
-      </div>
-      -->
-
-      <!--
-      <template v-if="renderedTable">
-        <div
-          class="table-row"
-          v-for="(row, i) in renderedTable"
-          :key="i"
-        >
-          <div
-            class="cell"
-            v-for="cell in row"
-            :key="cell.address"
-          >
-            <span v-if="cell.value !== null">{{ cell.value }}</span>
-          </div>
-        </div>
-      </template>
-      -->
-
       <table class="table" v-if="renderedTable">
         <tr
           class="table-row"
@@ -96,23 +66,12 @@
     </div>
 
     <div>Область формирования фида</div>
-    <!--<component
-      :exportSource="selectedSource"
-      :exportMode="selectedMode"
-      :buildingID="buildingID"
-      :section="section"
-      :chessDimension="chessSectionDimension"
-      :startRow="startRow"
-      :startColumn="startColumn"
-      :chessObject="renderdCells"
-      :chessArray="renderdCellsArr"
-      :is="feedComponent">
-    </component>-->
 
     <generator
       :exportSource="selectedSource"
       :exportMode="selectedMode"
       :buildingID="buildingID"
+      :entranceID="entranceID"
       :section="section"
       :chessDimension="chessSectionDimension"
       :startRow="startRow"
@@ -162,6 +121,7 @@ export default {
         columns: columns
       },
       buildingID: '',
+      entranceID: '',
       section: '',
       worksheet: null,
       renderedTable: null,
