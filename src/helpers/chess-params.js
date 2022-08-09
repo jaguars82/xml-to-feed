@@ -9,7 +9,19 @@ const chessParams = {
       floorRow: 7, // amount of spreadsheet rows for one floor (or for one flat)
       flatCell: 3 // amount of spreadsheet cells for one flat
     },
-    filters: {},
+    filters: {
+      rooms: function (cellValue) {
+        const arr = cellValue.split(' ')
+        return arr[0]
+      },
+      area: function (cellValue) {
+        const arr = cellValue.split(' ')
+        return parseFloat(arr[3].replaceAll(',', '.'))
+      },
+      price: function (cellValue) {
+        return cellValue.replaceAll(/\s/g,'')
+      }
+    },
     flatDimension: [3, 7] // [amount of cells (flatCell), amount of rows (floorRows)]
   },
   CityCenter1CVar: { 
@@ -22,7 +34,19 @@ const chessParams = {
       floorRow: 7,
       flatCell: 3
     },
-    filters: {},
+    filters: {
+      rooms: function (cellValue) {
+        const arr = cellValue.split(' ')
+        return arr[0]
+      },
+      area: function (cellValue) {
+        const arr = cellValue.split(' ')
+        return parseFloat(arr[3].replaceAll(',', '.'))
+      },
+      price: function (cellValue) {
+        return cellValue.replaceAll(/\s/g,'')
+      }
+    },
     flatDimension: [3, 7]
   },
   VDK: {
@@ -54,17 +78,28 @@ const chessParams = {
   Razvitie: {
     offsets: {
       flatNumber: [1, 1],
-      floor: [-1, -1],
-      rooms: [1, 6],
-      area: [1, 7],
-      price: [1, 4],
+      floor: [1, -1],
+      rooms: [6, 1],
+      area: [7, 1],
+      price: [4, 1],
       floorRow: 9,
       flatCell: 2
     },
     filters: {
       flatNumber: function (cellValue) {
-        let processedValue = cellValue;
-        return processedValue;
+        const arr = cellValue.split(' ')
+        return arr[1]
+      },
+      rooms: function (cellValue) {
+        const arr = cellValue.split('-')
+        return parseInt(arr[0])
+      },
+      area: function (cellValue) {
+        const arr = cellValue.split('(')
+        return parseFloat(arr[1].replaceAll(',', '.'))
+      },
+      price: function (cellValue) {
+        return cellValue.replaceAll(/\s/g,'')
       }
     },
     flatDimension: [2, 9]

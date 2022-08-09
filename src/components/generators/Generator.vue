@@ -112,10 +112,8 @@ export default {
       let flatNumber = 0
       if ('flatNumber' in this.filters && typeof this.filters.flatNumber === 'function') {
         flatNumber = this.filters.flatNumber(rawflatNumber)
-        console.log('with filter')
       } else {
         flatNumber = rawflatNumber
-        console.log('no filter')
       }
       if (flatNumber) {
         // set flat ID
@@ -143,8 +141,23 @@ export default {
       }
 
       // get rooms
+      let room = 1
       const rawRoom = this.processCell(startRow, startColumn, this.offsets.rooms)
+
       if (rawRoom) {
+        if ('rooms' in this.filters && typeof this.filters.rooms === 'function') {
+          room = this.filters.rooms(rawRoom)
+        } else {
+          room = parseInt(rawRoom)
+        }
+      }
+
+      if (room) {
+        flat.push({ room: room })
+        flatObj['room'] = room       
+      } 
+      
+      /* if (rawRoom) {
         if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
           const roomArr = rawRoom.split(' ')
           flat.push({ room: roomArr[0] })
@@ -157,27 +170,54 @@ export default {
           flat.push({ room: room })
           flatObj['room'] = room
         }
-      }
+      } */
 
       // get price
-      const flatPrice = this.processCell(startRow, startColumn, this.offsets.price)
-      if (flatPrice) {
+      let price = 0
+      const rawPrice = this.processCell(startRow, startColumn, this.offsets.price)
+
+      if (rawPrice) {
+        if ('price' in this.filters && typeof this.filters.price === 'function') {
+          price = this.filters.price(rawPrice)
+        } else {
+          price = parseInt(rawPrice)
+        }
+      }
+
+      if (price) {
+        flat.push({ price: price })
+        flatObj['price'] = price
+      }
+
+      /* if (rawPrice) {
         if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
-          const price = flatPrice.replaceAll(/\s/g,'')
+          const price = rawPrice.replaceAll(/\s/g,'')
           flat.push({ price: price })
           flatObj['price'] = price
         } else {
-          let price = 0
-          if (flatPrice) {
-            price = flatPrice
-          }
+          price = rawPrice
           flat.push({ price: price })
           flatObj['price'] = price
         }
-      }
+      } */
       
       // get area
+      let area = 0.00
       const rawArea = this.processCell(startRow, startColumn, this.offsets.area)
+      
+      if (rawArea) {
+        if ('area' in this.filters && typeof this.filters.area === 'function') {
+          area = this.filters.area(rawArea)
+        } else {
+          area = parseFloat(rawArea)
+        }
+      }
+
+      if (area) {
+        flat.push({ area: area })
+        flatObj['area'] = area       
+      } 
+      /*
       if (rawArea) {
         if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
           const areaArr = rawArea.split(' ')
@@ -190,7 +230,8 @@ export default {
           flatObj['area'] = area
         }
       }
-
+      */
+      // add flat to Processed Flats (object and array)
       if (flat.length > 0) {
         this.processedFlats.push({ flat: flat }) // for XML-export
         this.processedFlatsArrayOfObject.push(flatObj) // for SQL-export
