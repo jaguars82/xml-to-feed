@@ -1,6 +1,11 @@
 const chessParams = { 
   CityCenter1C: { 
     offsets: {
+      /* 
+       * in each pair of params:
+       * the first digit is a vertical offset (Y axis)
+       * the second digit is a horizontal offset  (X axis)
+       */
       flatNumber: [0, 0],
       floor: [1, 0],
       rooms: [0 ,1],
@@ -103,7 +108,30 @@ const chessParams = {
       }
     },
     flatDimension: [2, 9]
-  }
+  },
+  OP_Alexandrovka: {
+    offsets: {
+      flatNumber: [0, 1],
+      floor: [0, -1],
+      rooms: [0 ,0],
+      area: [1, 0],
+      price: [3, 1],
+      floorRow: 4,
+      flatCell: 2
+    },
+    filters: {
+      floor: function (cellValue) {
+        return parseInt(cellValue)
+      },
+      flatNumber: function (cellValue) {
+        return parseInt(cellValue.replace('№', ''))
+      },
+      rooms: function (cellValue) {
+        return parseInt(cellValue)
+      },
+    },
+    flatDimension: [2, 4]
+  },
 }
 
 export { chessParams }

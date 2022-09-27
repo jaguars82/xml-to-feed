@@ -137,7 +137,15 @@ export default {
         }
       } else {
         if (orderOnTheFloor === 1) {
-          const floor = this.processCell(startRow, startColumn, this.offsets.floor)
+          let floor = 0
+          const rawFloor = this.processCell(startRow, startColumn, this.offsets.floor)
+          if (rawFloor) {
+            if ('floor' in this.filters && typeof this.filters.floor === 'function') {
+              floor = this.filters.floor(rawFloor)
+            } else {
+              floor = rawFloor
+            }
+          }
           this.currentlyProcessingFloor = floor
         }
         flat.push({ floor: this.currentlyProcessingFloor })
