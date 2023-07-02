@@ -132,6 +132,37 @@ const chessParams = {
     },
     flatDimension: [2, 4]
   },
+  NewCode: { 
+    offsets: {
+      flatNumber: [1, 0],
+      floor: [1, -1],
+      rooms: [0 ,0],
+      area: [2, 0],
+      price: [0, 0], // (there is no price cell in the chess spreadsheet)
+      is_euro: [0, 0],
+      is_studio: [0, 0],
+      floorRow: 3,
+      flatCell: 1
+    },
+    filters: {
+      rooms: function (cellValue) {
+        return Array.from(cellValue)[1]
+      },
+      area: function (cellValue) {
+        return parseFloat(cellValue)
+      },
+      price: function () {
+        return 0
+      },
+      is_euro: function (cellValue) {
+        return Array.from(cellValue)[3] === 'е' ? 1 : 0
+      },
+      is_studio: function (cellValue) {
+        return Array.from(cellValue)[3] == '0' ? 1 : 0
+      },
+    },
+    flatDimension: [1, 3]
+  },
 }
 
 export { chessParams }

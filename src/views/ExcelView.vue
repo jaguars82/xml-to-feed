@@ -104,6 +104,7 @@ export default {
         { value: 'CityCenter1CVar', text: 'шахматка 1С (Сити-Центр), вариант' },
         { value: 'VDK', text: 'шахматка ВДК' },
         { value: 'Krays', text: 'шахматка КРАЙС' },
+        { value: 'NewCode', text: 'шахматка НОВЫЙ КОД' },
         { value: 'Razvitie', text: 'шахматка РАЗВИТИЕ' },
         { value: 'OP_Alexandrovka', text: 'шахматка ОТДЕЛ ПРОДАЖ - АЛЕКСАНДРОВКА' },
       ],
