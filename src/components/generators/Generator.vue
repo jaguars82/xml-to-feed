@@ -78,7 +78,7 @@ export default {
             const priceForM2 = flat.price && flat.area ? parseFloat(flat.price / flat.area).toFixed(2) : 0
             const price = flat.price ? flat.price : 0
 
-            const flatString = `(${this.buildingID}, ${this.entranceID}, NULL,	NULL,	${flat.area},	${flat.room},	${flat.floor},	${price},	2,	NOW(),	NOW(),	${priceForM2},	0,	NULL,	NULL,	NULL, NULL,	${this.section},	${flat.apartment},	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	0,	0)${separator}`
+            const flatString = `(${this.buildingID}, ${this.entranceID}, NULL,	NULL,	${flat.area},	${flat.room},	${flat.floor},	${price},	2,	NOW(),	NOW(),	${priceForM2},	0,	NULL,	NULL,	NULL, NULL,	${this.section},	${flat.apartment},	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	${flat.is_euro},	${flat.is_studio})${separator}`
 
             sqlString = sqlString + flatString
           }
@@ -229,20 +229,41 @@ export default {
         flat.push({ area: area })
         flatObj['area'] = area       
       } 
-      /*
-      if (rawArea) {
-        if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
-          const areaArr = rawArea.split(' ')
-          const area = parseFloat(areaArr[3].replaceAll(',', '.'))
-          flat.push({ area: area })
-          flatObj['area'] = area
-        } else {
-          const area = parseFloat( rawArea )
-          flat.push({ area: area })
-          flatObj['area'] = area
+      
+      // get is_euro flag (optional)
+      let is_euro = 0
+      if ('is_euro' in this.offsets) {
+        const rawIsEuro = this.processCell(startRow, startColumn, this.offsets.is_euro)
+
+        if (rawIsEuro) {
+          if ('is_euro' in this.filters && typeof this.filters.is_euro === 'function') {
+            is_euro = this.filters.is_euro(rawIsEuro)
+          } else {
+            is_euro = parseInt(rawIsEuro)
+          }
         }
       }
-      */
+
+      flat.push({ is_euro: is_euro })
+      flatObj['is_euro'] = is_euro
+
+      // get is_studio flag (optional)
+      let is_studio = 0
+      if ('is_studio' in this.offsets) {
+        const rawIsStudio = this.processCell(startRow, startColumn, this.offsets.is_euro)
+
+        if (rawIsStudio) {
+          if ('is_studio' in this.filters && typeof this.filters.is_studio === 'function') {
+            is_studio = this.filters.is_studio(rawIsStudio)
+          } else {
+            is_studio = parseInt(rawIsStudio)
+          }
+        }
+      }
+
+      flat.push({ is_studio: is_studio })
+      flatObj['is_studio'] = is_studio
+
       // add flat to Processed Flats (object and array)
       if (flat.length > 0) {
         this.processedFlats.push({ flat: flat }) // for XML-export
