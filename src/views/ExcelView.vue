@@ -93,7 +93,6 @@ import Generator from '../components/generators/Generator.vue'
 export default {
   components: {
     VueSelecto,
-    // Generator: () => import('../components/generators/Generator.vue'),
     Generator
   },
   data () {
@@ -116,7 +115,6 @@ export default {
       ],
       selectedMode: 'sql',
       
-      // dragContainer: document.body,
       dragContainer: '.table-container',
       grid: {
         rows: 600,
@@ -133,7 +131,6 @@ export default {
       startColumn: '',
       chessSectionRange: {},
       chessSectionDimension: [],
-      // feedComponent: 'Generator'
     }
   },
   methods: {
@@ -177,7 +174,6 @@ export default {
     readWorksheet(event) {
       /* read worksheet from excel file */
       this.file = event.target.files ? event.target.files[0] : null
-      // let ws = null
       if (this.file) {
         const reader = new FileReader()
 
@@ -189,12 +185,9 @@ export default {
           const wsname = wb.SheetNames[0]
           const ws = wb.Sheets[wsname]
           /* Convert array of arrays */
-          // const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
           this.worksheet = ws
         }
         reader.readAsBinaryString(this.file)
-        // const res = reader.readAsBinaryString(this.file);
-        // console.log(res)
       }
     },
     buildTable(ws) {
@@ -204,10 +197,7 @@ export default {
       /** TO DO - выбрать между cellsObject и cellsArray более подходящий формат */
       const cellsObject = {}
       const cellsArray = []
-      // console.log(ws)
-      //for (let row in this.grid.rows) {
       for (let row = 1; row <= this.grid.rows; row++) {
-        // console.log(row)
         const rowCells = []
         for (let column of this.grid.columns) {
           const cell = {}
@@ -225,19 +215,15 @@ export default {
         }
         tableObject[row] = rowCells
       }
-      // console.log(tableObject)
       this.renderedTable = tableObject
       this.renderdCells = cellsObject
       this.renderdCellsArr = cellsArray
-      // console.log(cellsObject)
-      // console.log(cellsArray)
     },
     onChange(event) {
 
       this.worksheet = null
       this.renderedTable = null
       this.readWorksheet(event)
-      //console.log(data)
       setTimeout(() => { this.buildTable(this.worksheet) }, 100)
     },
   }
