@@ -163,6 +163,47 @@ const chessParams = {
     },
     flatDimension: [1, 3]
   },
+  ComfortStroy: { 
+    offsets: {
+      ignoreFlatFactor: [0, 0],
+      flatNumber: [1, 0],
+      floor: [0, -1],
+      rooms: [0 ,0],
+      area: [2, 0],
+      price: [0, 0], // (there is no price cell in the chess spreadsheet)
+      is_euro: [0, 0],
+      is_studio: [0, 0],
+      floorRow: 3,
+      flatCell: 1
+    },
+    filters: {
+      ignoreFlatFactor: function (ignoreFactorValue) {
+        let ignore = false
+        if (ignoreFactorValue === 'офис' || ignoreFactorValue === 'ком помещ' || ignoreFactorValue === 'кком помещ') { 
+          ignore = true
+        }
+        return ignore
+      },
+      rooms: function (cellValue) {
+        const firstSymbol = Array.from(cellValue)[0]
+        return firstSymbol === 'С' ? 1 : firstSymbol
+      },
+      area: function (cellValue) {
+        // return cellValue ? parseFloat(cellValue.replaceAll(',', '.')) : 0
+        return cellValue ? parseFloat(cellValue) : 0
+      },
+      price: function () {
+        return 0
+      },
+      is_euro: function (cellValue) {
+        return Array.from(cellValue)[1] === 'е' ? 1 : 0
+      },
+      is_studio: function (cellValue) {
+        return Array.from(cellValue)[0] === 'С' ? 1 : 0
+      },
+    },
+    flatDimension: [1, 3]
+  },
 }
 
 export { chessParams }

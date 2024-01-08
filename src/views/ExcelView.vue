@@ -102,6 +102,7 @@ export default {
         { value: 'CityCenter1C', text: 'шахматка 1С (Сити-Центр)' },
         { value: 'CityCenter1CVar', text: 'шахматка 1С (Сити-Центр), вариант' },
         { value: 'VDK', text: 'шахматка ВДК' },
+        { value: 'ComfortStroy', text: 'шахматка КОМФОРТ-СТРОЙ' },
         { value: 'Krays', text: 'шахматка КРАЙС' },
         { value: 'NewCode', text: 'шахматка НОВЫЙ КОД' },
         { value: 'Razvitie', text: 'шахматка РАЗВИТИЕ' },
