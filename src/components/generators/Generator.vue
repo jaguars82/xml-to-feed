@@ -39,9 +39,7 @@ export default {
     isSelectionCorrect () {
       const byWidth = this.chessDimension[0] % this.flatDimension[0]
       const byHeight = this.chessDimension[1] % this.flatDimension[1]
-      // console.log( [ byWidth, byHeight ] )
       return byWidth === 0 && byHeight === 0
-      
     },
     floorsAmount() {
       return this.chessDimension[1] / this.flatDimension[1]
@@ -104,168 +102,182 @@ export default {
       return this.chessObject[targetCelladdress].value
     },
     parseFlat(startRow, startColumn, orderOnTheFloor) {
+
+      // check flat for ignore (to ignore commercial rooms, offices etc.)
+      let ignoreFlat = false
+      if ('ignoreFlatFactor' in this.offsets) {
+        const rawIgnoreFactor = this.processCell(startRow, startColumn, this.offsets.ignoreFlatFactor)
+        if (rawIgnoreFactor) {
+          if ('ignoreFlatFactor' in this.filters && typeof this.filters.ignoreFlatFactor === 'function') {
+            ignoreFlat = this.filters.ignoreFlatFactor(rawIgnoreFactor)
+          }
+        }
+      }
+
       const flat = []
       const flatObj = {}
 
-      // get flat number
-      let flatNumber = 0
-      const rawflatNumber = this.processCell(startRow, startColumn, this.offsets.flatNumber)
-      
-      if (rawflatNumber) {
-        if ('flatNumber' in this.filters && typeof this.filters.flatNumber === 'function') {
-          flatNumber = this.filters.flatNumber(rawflatNumber)
-        } else {
-          flatNumber = rawflatNumber
+      if (!ignoreFlat) {
+        // get flat number
+        let flatNumber = 0
+        const rawflatNumber = this.processCell(startRow, startColumn, this.offsets.flatNumber)
+        
+        if (rawflatNumber) {
+          if ('flatNumber' in this.filters && typeof this.filters.flatNumber === 'function') {
+            flatNumber = this.filters.flatNumber(rawflatNumber)
+          } else {
+            flatNumber = rawflatNumber
+          }
         }
-      }
-      
-      if (flatNumber) {
-        // set flat ID
-        flat.push({ flat_id: `${this.buildingID}_${flatNumber}` })
-        // set flat number
-        flat.push({ apartment: flatNumber })
-        flatObj['apartment'] = flatNumber
-      }
+        
+        if (flatNumber) {
+          // set flat ID
+          flat.push({ flat_id: `${this.buildingID}_${flatNumber}` })
+          // set flat number
+          flat.push({ apartment: flatNumber })
+          flatObj['apartment'] = flatNumber
+        }
 
-      // get floor
-      if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
-        const rawFloor = this.processCell(startRow, startColumn, this.offsets.floor)
-        if (rawFloor) {
-          const floorArr = rawFloor.split(' ')
-          flat.push({ floor: floorArr[1] })
-          flatObj['floor'] = floorArr[1]
-        }
-      } else {
-        if (orderOnTheFloor === 1) {
-          let floor = 0
+        // get floor
+        if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
           const rawFloor = this.processCell(startRow, startColumn, this.offsets.floor)
           if (rawFloor) {
-            if ('floor' in this.filters && typeof this.filters.floor === 'function') {
-              floor = this.filters.floor(rawFloor)
+            const floorArr = rawFloor.split(' ')
+            flat.push({ floor: floorArr[1] })
+            flatObj['floor'] = floorArr[1]
+          }
+        } else {
+          if (orderOnTheFloor === 1) {
+            let floor = 0
+            const rawFloor = this.processCell(startRow, startColumn, this.offsets.floor)
+            if (rawFloor) {
+              if ('floor' in this.filters && typeof this.filters.floor === 'function') {
+                floor = this.filters.floor(rawFloor)
+              } else {
+                floor = rawFloor
+              }
+            }
+            this.currentlyProcessingFloor = floor
+          }
+          flat.push({ floor: this.currentlyProcessingFloor })
+          flatObj['floor'] = this.currentlyProcessingFloor
+        }
+
+        // get rooms
+        let room = 1
+        const rawRoom = this.processCell(startRow, startColumn, this.offsets.rooms)
+
+        if (rawRoom) {
+          if ('rooms' in this.filters && typeof this.filters.rooms === 'function') {
+            room = this.filters.rooms(rawRoom)
+          } else {
+            room = parseInt(rawRoom)
+          }
+        }
+
+        if (room) {
+          flat.push({ room: room })
+          flatObj['room'] = room       
+        } 
+        
+        /* if (rawRoom) {
+          if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
+            const roomArr = rawRoom.split(' ')
+            flat.push({ room: roomArr[0] })
+            flatObj['room'] = roomArr[0]
+          } else {
+            let room = 1
+            if (parseInt(rawRoom) > 1) {
+              room = rawRoom
+            }
+            flat.push({ room: room })
+            flatObj['room'] = room
+          }
+        } */
+
+        // get price
+        let price = 0
+        const rawPrice = this.processCell(startRow, startColumn, this.offsets.price)
+
+        if (rawPrice) {
+          if ('price' in this.filters && typeof this.filters.price === 'function') {
+            price = this.filters.price(rawPrice)
+          } else {
+            price = parseInt(rawPrice)
+          }
+        }
+
+        if (price) {
+          flat.push({ price: price })
+          flatObj['price'] = price
+        }
+
+        /* if (rawPrice) {
+          if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
+            const price = rawPrice.replaceAll(/\s/g,'')
+            flat.push({ price: price })
+            flatObj['price'] = price
+          } else {
+            price = rawPrice
+            flat.push({ price: price })
+            flatObj['price'] = price
+          }
+        } */
+        
+        // get area
+        let area = 0.00
+        const rawArea = this.processCell(startRow, startColumn, this.offsets.area)
+        
+        if (rawArea) {
+          if ('area' in this.filters && typeof this.filters.area === 'function') {
+            area = this.filters.area(rawArea)
+          } else {
+            area = parseFloat(rawArea)
+          }
+        }
+
+        if (area) {
+          flat.push({ area: area })
+          flatObj['area'] = area       
+        } 
+        
+        // get is_euro flag (optional)
+        let is_euro = 0
+        if ('is_euro' in this.offsets) {
+          const rawIsEuro = this.processCell(startRow, startColumn, this.offsets.is_euro)
+
+          if (rawIsEuro) {
+            if ('is_euro' in this.filters && typeof this.filters.is_euro === 'function') {
+              is_euro = this.filters.is_euro(rawIsEuro)
             } else {
-              floor = rawFloor
+              is_euro = parseInt(rawIsEuro)
             }
           }
-          this.currentlyProcessingFloor = floor
         }
-        flat.push({ floor: this.currentlyProcessingFloor })
-        flatObj['floor'] = this.currentlyProcessingFloor
-      }
 
-      // get rooms
-      let room = 1
-      const rawRoom = this.processCell(startRow, startColumn, this.offsets.rooms)
+        flat.push({ is_euro: is_euro })
+        flatObj['is_euro'] = is_euro
 
-      if (rawRoom) {
-        if ('rooms' in this.filters && typeof this.filters.rooms === 'function') {
-          room = this.filters.rooms(rawRoom)
-        } else {
-          room = parseInt(rawRoom)
-        }
-      }
+        // get is_studio flag (optional)
+        let is_studio = 0
+        if ('is_studio' in this.offsets) {
+          const rawIsStudio = this.processCell(startRow, startColumn, this.offsets.is_euro)
 
-      if (room) {
-        flat.push({ room: room })
-        flatObj['room'] = room       
-      } 
-      
-      /* if (rawRoom) {
-        if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
-          const roomArr = rawRoom.split(' ')
-          flat.push({ room: roomArr[0] })
-          flatObj['room'] = roomArr[0]
-        } else {
-          let room = 1
-          if (parseInt(rawRoom) > 1) {
-            room = rawRoom
-          }
-          flat.push({ room: room })
-          flatObj['room'] = room
-        }
-      } */
-
-      // get price
-      let price = 0
-      const rawPrice = this.processCell(startRow, startColumn, this.offsets.price)
-
-      if (rawPrice) {
-        if ('price' in this.filters && typeof this.filters.price === 'function') {
-          price = this.filters.price(rawPrice)
-        } else {
-          price = parseInt(rawPrice)
-        }
-      }
-
-      if (price) {
-        flat.push({ price: price })
-        flatObj['price'] = price
-      }
-
-      /* if (rawPrice) {
-        if (this.exportSource === 'CityCenter1C' || this.exportSource === 'CityCenter1CVar') {
-          const price = rawPrice.replaceAll(/\s/g,'')
-          flat.push({ price: price })
-          flatObj['price'] = price
-        } else {
-          price = rawPrice
-          flat.push({ price: price })
-          flatObj['price'] = price
-        }
-      } */
-      
-      // get area
-      let area = 0.00
-      const rawArea = this.processCell(startRow, startColumn, this.offsets.area)
-      
-      if (rawArea) {
-        if ('area' in this.filters && typeof this.filters.area === 'function') {
-          area = this.filters.area(rawArea)
-        } else {
-          area = parseFloat(rawArea)
-        }
-      }
-
-      if (area) {
-        flat.push({ area: area })
-        flatObj['area'] = area       
-      } 
-      
-      // get is_euro flag (optional)
-      let is_euro = 0
-      if ('is_euro' in this.offsets) {
-        const rawIsEuro = this.processCell(startRow, startColumn, this.offsets.is_euro)
-
-        if (rawIsEuro) {
-          if ('is_euro' in this.filters && typeof this.filters.is_euro === 'function') {
-            is_euro = this.filters.is_euro(rawIsEuro)
-          } else {
-            is_euro = parseInt(rawIsEuro)
+          if (rawIsStudio) {
+            if ('is_studio' in this.filters && typeof this.filters.is_studio === 'function') {
+              is_studio = this.filters.is_studio(rawIsStudio)
+            } else {
+              is_studio = parseInt(rawIsStudio)
+            }
           }
         }
+
+        flat.push({ is_studio: is_studio })
+        flatObj['is_studio'] = is_studio
       }
-
-      flat.push({ is_euro: is_euro })
-      flatObj['is_euro'] = is_euro
-
-      // get is_studio flag (optional)
-      let is_studio = 0
-      if ('is_studio' in this.offsets) {
-        const rawIsStudio = this.processCell(startRow, startColumn, this.offsets.is_euro)
-
-        if (rawIsStudio) {
-          if ('is_studio' in this.filters && typeof this.filters.is_studio === 'function') {
-            is_studio = this.filters.is_studio(rawIsStudio)
-          } else {
-            is_studio = parseInt(rawIsStudio)
-          }
-        }
-      }
-
-      flat.push({ is_studio: is_studio })
-      flatObj['is_studio'] = is_studio
 
       // add flat to Processed Flats (object and array)
-      if (flat.length > 0) {
+      if (!ignoreFlat && flat.length > 0) {
         this.processedFlats.push({ flat: flat }) // for XML-export
         this.processedFlatsArrayOfObject.push(flatObj) // for SQL-export
       }
